@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Http;
 
 class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
 {
+
+    public function getAlias(): string
+    {
+        return 'newApi';
+    }
+
     private function sendRequest(string $action, array $data, HttpMethodEnum $method = HttpMethodEnum::post): Response
     {
         return Http::acceptJson()

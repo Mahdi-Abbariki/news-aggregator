@@ -14,6 +14,11 @@ return [
         NYTimesStrategy::class,
         // ...
         // add new strategies when its implemented
+    ],
+
+    'apiKeys' => [
         "NewsApi" => env('NEWS_API_API_KEY'),
+        "NYTimes" => env('NYTIMES_API_KEY'),
+        "Guardian" => env('GUARDIAN_API_KEY'),
     ]
 ];

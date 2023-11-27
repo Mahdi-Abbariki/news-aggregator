@@ -2,29 +2,35 @@
 
 namespace App\Strategies;
 
-use App\Enums\HttpMethodsEnum;
+use App\Enums\HttpMethodEnum;
 use App\Interfaces\NewsableInterface;
 use App\Interfaces\NewsApiStrategyInterface;
-use DateTime;
+use Carbon\Carbon;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class NYTimesStrategy implements NewsApiStrategyInterface, NewsableInterface
 {
-    private static $baseUrl = '/';
-    
-    private function sendRequest(string $action, array $data, HttpMethodsEnum $method = 'post'): Http
+    public function getAlias(): string
     {
-        return Http::acceptsJson()->{$method}(self::$baseUrl . $action, $data);
+        return 'newYorkTimes';
     }
 
-    public function getUpdatedNews(DateTime $startDate, ?DateTime $endDate = null): Http
+    private function sendRequest(string $action, array $data, HttpMethodEnum $method = HttpMethodEnum::post): Response
     {
-        return $this->sendRequest('action', []);
+        return Http::acceptJson()
+            ->baseUrl('')
+            ->{$method->value}($action, $data);
+    }
+
+    public function getUpdatedNews(Carbon $startDate, ?Carbon $endDate = null): Collection
+    {
+        return collect([]);
     }
 
     public function makeNewsModel(Collection $news): Collection
     {
-        return collect([]);
+        return collect([]); //TODO: make news models
     }
 }
