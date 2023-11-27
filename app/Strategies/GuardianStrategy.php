@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
 {
@@ -46,8 +47,10 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
         $response = $this->sendRequest('search', $data, HttpMethodEnum::get);
         $body = $response->json()['response'];
 
-        if (!$response->successful() || $body['status'] != 'ok')
+        if (!$response->successful() || $body['status'] != 'ok') {
+            Log::error('wrong answer from Guardian API', ["body" => $body, 'trace' => debug_backtrace()]);
             throw new Exception('wrong answer from GuardianApi');
+        }
 
         $articles = collect($body['results']);
 

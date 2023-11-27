@@ -10,13 +10,14 @@ use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
 {
 
     public function getAlias(): string
     {
-        return 'newApi';
+        return 'newsApi';
     }
 
     private function sendRequest(string $action, array $data, HttpMethodEnum $method = HttpMethodEnum::post): Response
@@ -37,7 +38,7 @@ class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
          * so we dynamically subDay to get latest news available for this plan
          */
         $startDate = $startDate->subDay();
-        $endDate = $endDate ? $startDate->subDay() : now()->subDay();
+        $endDate = $endDate ? $endDate->subDay() : now()->subDay();
 
         $data = [
             "from" => $startDate->format('Y-m-d\TH:i:s'),
@@ -53,8 +54,10 @@ class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
         $response = $this->sendRequest('everything', $data, HttpMethodEnum::get);
         $body = $response->json();
 
-        if (!$response->successful() || $body['status'] != 'ok')
+        if (!$response->successful() || $body['status'] != 'ok'){
+            Log::error('wrong answer from NewsApi API', ["body" => $body, 'trace' => debug_backtrace()]);
             throw new Exception('wrong answer from NewsApi');
+        }
 
         return collect($body['articles']);
     }
