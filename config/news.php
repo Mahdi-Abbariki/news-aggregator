@@ -14,5 +14,6 @@ return [
         NYTimesStrategy::class,
         // ...
         // add new strategies when its implemented
+        "NewsApi" => env('NEWS_API_API_KEY'),
     ]
 ];

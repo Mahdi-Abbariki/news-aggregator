@@ -2,10 +2,8 @@
 
 namespace App\Enums;
 
-enum HttpMethodsEnum
+enum HttpMethodEnum: string
 {
-    case post;
-    case get;
-    case put;
-    case delete;
+    case post = 'post';
+    case get = 'get';
 }
