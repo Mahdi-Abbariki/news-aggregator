@@ -69,6 +69,7 @@ class NYTimesStrategy implements NewsApiStrategyInterface, NewsableInterface
             $oldestArticleDate = Carbon::parse($oldestArticle['pub_date']);
 
             if ($startDate->lt($oldestArticleDate) && $paginationInfo['offset'] + $perPage < $paginationInfo['hits']) { // we need to do pagination
+                sleep(12); // sleep between each request to prevent RateLimit
                 $nextPage = $this->getUpdatedNews($startDate, $endDate, $page + 1);
                 $articles = $articles->concat($nextPage);
             }

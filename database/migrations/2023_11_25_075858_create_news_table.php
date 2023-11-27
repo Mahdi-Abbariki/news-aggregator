@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
+            $table->string('source_id')->unique();
+            $table->string('title');
+            $table->text('summary');
+            $table->longText('body');
+            $table->string('image');
+            $table->string('author'); //author can be another table too. in this case this field must be a foreign key
+            $table->string('source');
+            $table->string('section_name')->nullable();
+            $table->string('source_url');
+            $table->dateTime('published_at');
             $table->timestamps();
         });
     }

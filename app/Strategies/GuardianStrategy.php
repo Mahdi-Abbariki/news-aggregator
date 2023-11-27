@@ -31,6 +31,7 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
 
     public function getUpdatedNews(Carbon $startDate, ?Carbon $endDate = null, int $page = 1): Collection
     {
+
         $endDate = $endDate ?: now();
         $data = [
             "lang" => "en",
@@ -40,9 +41,8 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
             "page-size" => 50, //maximum
             "page" => $page,
             "order-by" => 'newest',
-            "show-fields" => implode(',', ['thumbnail', 'shortUrl', 'headline', 'body']),
+            "show-fields" => implode(',', ['byline', 'trailText', 'publication', 'thumbnail', 'shortUrl', 'headline', 'body']),
             "show-elements" => implode(',', ['image']),
-            "show-references" => implode(',', ['author'])
         ];
         $response = $this->sendRequest('search', $data, HttpMethodEnum::get);
         $body = $response->json()['response'];
@@ -52,7 +52,7 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
             throw new Exception('wrong answer from GuardianApi');
         }
 
-        $articles = collect($body['results']);
+        $articles =  $body['total'] > 0 ? collect($body['results']) : collect();
 
         if (isset($body['pages']) && $body['currentPage'] < $body['pages']) { // get all data recursively based on pagination
             $nextPage = $this->getUpdatedNews($startDate, $endDate, $page + 1);
