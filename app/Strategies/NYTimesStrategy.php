@@ -82,7 +82,7 @@ class NYTimesStrategy implements NewsApiStrategyInterface, NewsableInterface
 
     public function checkValidData(array $news): bool
     {
-        return isset($news['uri']) &&
+        $flag = isset($news['uri']) &&
             isset($news['headline']) &&
             isset($news['headline']['main']) &&
             isset($news['abstract']) &&
@@ -95,6 +95,12 @@ class NYTimesStrategy implements NewsApiStrategyInterface, NewsableInterface
             isset($news['section_name']) &&
             isset($news['web_url']) &&
             isset($news['pub_date']);
+
+        if (!$flag) return $flag;
+
+        $checkUnique = News::query()->where('source_id', $news['uri'])->count();
+
+        return !$checkUnique;
     }
 
     public function makeNewsModel(array $news): News

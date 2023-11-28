@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Repositories\NewsRepository;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateNewsData extends Command
 {
@@ -25,6 +28,21 @@ class UpdateNewsData extends Command
      */
     public function handle()
     {
-        //
+        $filePath = 'updateNews/dates.json';
+        $lastUpdateDates = null;
+        if (Storage::fileExists($filePath)) {
+            $lastUpdateDates = (array)json_decode(Storage::get($filePath));
+            if (Carbon::parse($lastUpdateDates['lastUpdate'])->gte(now()->subHour()->subMinute()))
+                return 0; // we already have the last updates, there is no need to call the command again
+        }
+
+        $startDate = $lastUpdateDates ? Carbon::parse($lastUpdateDates['lastUpdate']) : now()->subHour();
+        $endDate = now();
+
+        Storage::put($filePath, json_encode(['lastUpdate' => $endDate])); // update the last update time in json file
+
+        NewsRepository::updateNews($startDate, $endDate);
+
+        return 0;
     }
 }

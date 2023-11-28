@@ -66,7 +66,7 @@ class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
     public function checkValidData(array $news): bool
     {
         // some news can be fetched in this API but all of its field has value of [Removed]
-        return isset($news['url']) &&
+        $flag =  isset($news['url']) &&
             isset($news['title']) &&
             isset($news['description']) &&
             isset($news['content']) &&
@@ -74,14 +74,19 @@ class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
             isset($news['author']) &&
             isset($news['publishedAt']) &&
             $news['url'] != '[Removed]';
+
+        if (!$flag) return $flag;
+        
+        $id = $this->generateId($news);
+        $checkUnique = News::query()->where('source_id', $id)->count();
+
+        return !$checkUnique;
     }
 
     public function makeNewsModel(array $news): News
     {
-        $url = trim($news['url'], ' /');
-        $baseUrl = parse_url($url, PHP_URL_HOST) . '/';
-        $id = substr($url, strrpos($url, $baseUrl) + strlen($baseUrl));
-        
+        $id = $this->generateId($news);
+
         $newsModel = new News();
         $newsModel->source_id = $id;
         $newsModel->title = $news['title'];
@@ -95,5 +100,14 @@ class NewsApiStrategy implements NewsApiStrategyInterface, NewsableInterface
         $newsModel->published_at = Carbon::parse($news['publishedAt']);
 
         return $newsModel;
+    }
+
+    private function generateId(array $news): string
+    {
+        $url = trim($news['url'], ' /');
+        $baseUrl = parse_url($url, PHP_URL_HOST) . '/';
+        $id = substr($url, strrpos($url, $baseUrl) + strlen($baseUrl));
+
+        return $id;
     }
 }

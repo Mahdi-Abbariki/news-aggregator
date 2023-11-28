@@ -14,28 +14,32 @@ class NewsRepository
      * @param Carbon $startDate defaults to one hour ago
      * @param Carbon $endDate defaults to now
      */
-    public function updateNews(?Carbon $startDate = null, ?Carbon $endDate = null): void
+    public static function updateNews(?Carbon $startDate = null, ?Carbon $endDate = null): void
     {
-        $startDate = $startDate ?: now()->subHours(1);
+        $startDate = $startDate ?: now()->subHour();
         $endDate = $endDate ?: now();
 
         $strategies = config('news.strategies');
-        $latestNewsModels = [];
+        $classes = [];
+        $rawNews = [];
 
         foreach ($strategies as $newsStrategy) {
             if (class_exists($newsStrategy)) {
                 $newsStrategy = new $newsStrategy();
-                if ($newsStrategy instanceof NewsApiStrategyInterface && $newsStrategy instanceof NewsableInterface) {
-                    $rawNews = $newsStrategy->getUpdatedNews($startDate, $endDate);
 
-                    foreach ($rawNews as $news)
-                        if ($newsStrategy->checkValidData($news))
-                            $latestNewsModels[] = $newsStrategy->makeNewsModel($news);
-                }
+                $classes[$newsStrategy->getAlias()] = $newsStrategy;
+
+                $rawNews[$newsStrategy->getAlias()] = [];
+                if ($newsStrategy instanceof NewsApiStrategyInterface && $newsStrategy instanceof NewsableInterface)
+                    $rawNews[$newsStrategy->getAlias()] = $newsStrategy->getUpdatedNews($startDate, $endDate);
             }
         }
 
-        foreach ($latestNewsModels as $model)
-            $model->save();
+        foreach ($rawNews as $alias => $news) {
+            $class = $classes[$alias];
+            foreach ($news as $n)
+                if ($class->checkValidData($n))
+                    $class->makeNewsModel($n)->save();
+        }
     }
 }

@@ -66,7 +66,7 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
 
     public function checkValidData(array $news): bool
     {
-        return isset($news['id']) &&
+        $flag = isset($news['id']) &&
             isset($news['webTitle']) &&
             isset($news['fields']) &&
             isset($news['fields']['body']) &&
@@ -75,6 +75,12 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
             isset($news['fields']['shortUrl']) &&
             isset($news['sectionName']) &&
             isset($news['webPublicationDate']);
+
+        if (!$flag) return $flag;
+
+        $checkUnique = News::query()->where('source_id', $news['id'])->count();
+
+        return !$checkUnique;
     }
 
     public function makeNewsModel(array $news): News
