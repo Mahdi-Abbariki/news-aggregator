@@ -205,6 +205,64 @@
                     }
                 }
             }
+        },
+        "/sources": {
+            "get": {
+                "tags": [
+                    "News"
+                ],
+                "summary": "Sources Index",
+                "operationId": "a692ac079adc5743361631e3af86292d",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "sources": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sections": {
+            "get": {
+                "tags": [
+                    "News"
+                ],
+                "summary": "Section names Index",
+                "operationId": "612e2a5261ee2dd6d6e8ca4dea957ec6",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "sections": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

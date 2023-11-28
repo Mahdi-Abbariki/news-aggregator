@@ -199,4 +199,61 @@ class NewsController extends Controller
             "news" => $news
         ]);
     }
+
+    /**
+     * @OA\Get(
+     *   tags={"News"},
+     *   path="/sources",
+     *   summary="Sources Index",
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="sources", type="array", @OA\Items(type="string")),
+     *     )
+     *   )
+     * )
+     */
+    public function sourcesIndex()
+    {
+        $sources = News::query()
+            ->select('source')
+            ->distinct()
+            ->pluck('source');
+
+        return response()->json([
+            "sources" => $sources
+        ]);
+    }
+
+
+    /**
+     * @OA\Get(
+     *   tags={"News"},
+     *   path="/sections",
+     *   summary="Section names Index",
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="sections", type="array", @OA\Items(type="string")),
+     *     )
+     *   )
+     * )
+     */
+    public function sectionsIndex()
+    {
+        $sources = News::query()
+            ->select('section_name')
+            ->distinct()
+            ->pluck('section_name')
+            ->filter()
+            ->values();
+
+        return response()->json([
+            "sections" => $sources
+        ]);
+    }
 }
