@@ -48,13 +48,15 @@ composer install
 cp .env.example .env
 ```
 
-4. Run migrations:
+4. Add related API Keys in .env
+
+5. Run migrations:
 
 ```bash
 php artisan migrate
 ```
 
-5. Schedule the task to update news data regularly:
+6. Schedule the task to update news data regularly:
 
 ```bash
 * * * * * php /path-to-news-aggregator-project/artisan schedule:run >> /dev/null 2>&1
