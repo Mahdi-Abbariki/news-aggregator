@@ -1,23 +1,26 @@
 # News Aggregator
 
-This Laravel project serves as a news aggregator, fetching and aggregating news data from multiple API sources, including The Guardian, The New York Times, and News API. The aggregated data is stored in a local database and can be accessed through various filters using the NewsRepository.
+This Laravel project serves as a news aggregator, fetching and aggregating news data from multiple API sources, including The Guardian, The New York Times, and News API. The aggregated data is stored in a local database and can be accessed through various filters using the implemented API.
 
 ## Features
 
-- Fetches news data from The Guardian, The New York Times, and News API.
-- Aggregates and stores the data in a local database.
-- Provides a flexible NewsRepository for querying and filtering news data.
-- Exposes a RESTful API for accessing aggregated news data.
+- **News Sources Integration**: Fetches news data seamlessly from popular sources, including The Guardian, The New York Times, and News API.
+- **Data Aggregation and Storage**: Efficiently aggregates and stores the fetched data in a local database, ensuring a centralized and organized news repository.
+- **Flexible NewsRepository**: Employs a versatile NewsRepository allowing easy and standardized querying of news data, providing a clean abstraction for data interactions.
+- **RESTful API**: Offers a RESTful API for convenient access to aggregated news data, providing a straightforward means for integration with other applications or services.
+- **Design Patterns Implementation**: Utilizes design patterns to maintain consistency and ensure a structured, scalable, and maintainable codebase.
 
 ## Project Structure
 
-The project follows the Repository Pattern for better organization and separation of concerns. Key components include:
+The project adopts the Repository and Strategy Patterns to enhance organization and maintain separation of concerns. Noteworthy components include:
 
-- `NewsAggregatorService`: A service responsible for aggregating data from different API sources and saving it using the NewsRepository.
+- `NewsRepository`: A repository centralizing news-related operations, offering a unified interface for querying news data. The repository is responsible for fetching updated news from all defined strategies specified in `config/news.php`.
 
-- `GuardianRepository`, `NYTimesRepository`, `NewsApiRepository`: Repositories for interacting with The Guardian, The New York Times, and News API, respectively.
+- Interfaces (`NewsApiStrategyInterface`, `NewsableInterface`): Implemented by all strategies, these interfaces ensure a standardized approach for interacting with various news sources, promoting consistency and ease of integration.
 
-- `NewsRepository`: A repository for handling news-related operations and providing a unified interface for querying and filtering news data.
+- `GuardianStrategy`,  `NYTimesStrategy`,  `NewsApiStrategy`: Strategies designed for interacting with specific news sources such as The Guardian, The New York Times, and News API, respectively.
+
+- `NewsController`: Manages APIs for news-related functionalities, providing endpoints for retrieving aggregated news data. This controller access news stored in the local database, ensuring efficient and reliable data retrieval for API consumers.
 
 ## Getting Started
 
