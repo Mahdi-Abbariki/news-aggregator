@@ -1,0 +1,278 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "News Aggregator Api Documentation",
+        "contact": {
+            "name": "Mahdi Abbariki",
+            "email": "mahdi.abbariki0@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/news": {
+            "get": {
+                "tags": [
+                    "News"
+                ],
+                "summary": "News index",
+                "operationId": "21b84dbdd75fd20b9c9ddb9b9e68f0a1",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "of type ISO8601",
+                        "schema": {
+                            "type": "datetime",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "of type ISO8601",
+                        "schema": {
+                            "type": "datetime",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "required with sortType",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "published_at",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "sortType",
+                        "in": "query",
+                        "description": "required with sortBy",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ASC",
+                                "DESC"
+                            ],
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "search in title of news with LIKE operator (%title%)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "author",
+                        "in": "query",
+                        "description": "search in author of news with LIKE operator (%author%)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "section_name",
+                        "in": "query",
+                        "description": "search in section_name of news (exact match). use /sections api to get full list of sources",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "search in source of news (exact match). use /sources api to get full list of sources",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "query string to search in multiple data at once. required if search_in is specified",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "search_in[]",
+                        "in": "query",
+                        "description": "choose the columns to search `q` in them. they will be search as `OR` and it uses LIKE operator. possible values `summary`, `title` and `body`",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "include_body",
+                        "in": "query",
+                        "description": "append body of news or not",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "schema": {
+                            "type": "integer",
+                            "default": "1"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "the number of news included in result. 10 is the default. maximum is 50",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/News"
+                                            }
+                                        },
+                                        "first_page_url": {
+                                            "type": "string"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string"
+                                        },
+                                        "path": {
+                                            "type": "string"
+                                        },
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "from": {
+                                            "type": "integer"
+                                        },
+                                        "to": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "last_page": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ValidationErrorResponse": {
+                "properties": {
+                    "message": {
+                        "description": "the first error message and it also contains the count of other errors occurred",
+                        "type": "string",
+                        "example": "The propertyName is required. (and 1 more error)"
+                    },
+                    "errors": {
+                        "properties": {
+                            "propertyName": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The propertyName is required."
+                                },
+                                "collectionFormat": "multi"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "News": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "source_id": {
+                        "type": "string",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "summary": {
+                        "type": "string",
+                        "format": "text"
+                    },
+                    "body": {
+                        "type": "string",
+                        "format": "LongText"
+                    },
+                    "image": {
+                        "description": "url to the image",
+                        "type": "string"
+                    },
+                    "author": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "section_name": {
+                        "type": "string"
+                    },
+                    "source_url": {
+                        "type": "string"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
