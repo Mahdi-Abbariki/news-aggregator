@@ -5,6 +5,7 @@ namespace App\Strategies;
 use App\Enums\HttpMethodEnum;
 use App\Interfaces\NewsableInterface;
 use App\Interfaces\NewsApiStrategyInterface;
+use App\Models\News;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -62,8 +63,34 @@ class GuardianStrategy implements NewsApiStrategyInterface, NewsableInterface
         return $articles;
     }
 
-    public function makeNewsModel(Collection $news): Collection
+
+    public function checkValidData(array $news): bool
     {
-        return collect([]); //TODO: make news models
+        return isset($news['id']) &&
+            isset($news['webTitle']) &&
+            isset($news['fields']) &&
+            isset($news['fields']['body']) &&
+            isset($news['fields']['thumbnail']) &&
+            isset($news['fields']['byline']) &&
+            isset($news['fields']['shortUrl']) &&
+            isset($news['sectionName']) &&
+            isset($news['webPublicationDate']);
+    }
+
+    public function makeNewsModel(array $news): News
+    {
+        $newsModel = new News();
+        $newsModel->source_id = $news['id'];
+        $newsModel->title = $news['webTitle'];
+        $newsModel->summary = $news['fields']['trailText'];
+        $newsModel->body = $news['fields']['body'];
+        $newsModel->image = $news['fields']['thumbnail'];
+        $newsModel->author = $news['fields']['byline'];
+        $newsModel->source = $news['fields']['publication'] ?: $this->getAlias();
+        $newsModel->section_name = $news['sectionName'];
+        $newsModel->source_url = $news['fields']['shortUrl'];
+        $newsModel->published_at = Carbon::parse($news['webPublicationDate']);
+
+        return $newsModel;
     }
 }

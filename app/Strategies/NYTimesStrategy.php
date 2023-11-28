@@ -5,6 +5,7 @@ namespace App\Strategies;
 use App\Enums\HttpMethodEnum;
 use App\Interfaces\NewsableInterface;
 use App\Interfaces\NewsApiStrategyInterface;
+use App\Models\News;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -79,8 +80,42 @@ class NYTimesStrategy implements NewsApiStrategyInterface, NewsableInterface
         return $articles->filter(fn ($article) => $startDate->lte(Carbon::parse($article['pub_date'])) && $endDate->gte(Carbon::parse($article['pub_date'])));
     }
 
-    public function makeNewsModel(Collection $news): Collection
+    public function checkValidData(array $news): bool
     {
-        return collect([]); //TODO: make news models
+        return isset($news['uri']) &&
+            isset($news['headline']) &&
+            isset($news['headline']['main']) &&
+            isset($news['abstract']) &&
+            isset($news['lead_paragraph']) &&
+            isset($news['multimedia']) &&
+            is_array($news['multimedia']) &&
+            count($news['multimedia']) &&
+            isset($news['byline']) &&
+            isset($news['byline']['original']) &&
+            isset($news['section_name']) &&
+            isset($news['web_url']) &&
+            isset($news['pub_date']);
+    }
+
+    public function makeNewsModel(array $news): News
+    {
+        $image = null;
+        foreach ($news['multimedia'] as $multimedia)
+            if ($multimedia['type'] == 'image' && in_array($multimedia['subType'], ['thumbnail', 'thumbLarge', 'wide']))
+                $image = 'https://www.nytimes.com/' . $multimedia['url'];
+
+        $newsModel = new News();
+        $newsModel->source_id = $news['uri'];
+        $newsModel->title = $news['headline']['main'];
+        $newsModel->summary = $news['abstract'];
+        $newsModel->body = $news['lead_paragraph']; // NYTimes API does not provide getting whole content of a news
+        $newsModel->image = $image;
+        $newsModel->author = $news['byline']['original'];
+        $newsModel->source = isset($news['source']) ? $news['source'] : $this->getAlias();
+        $newsModel->section_name = $news['section_name'] . (isset($news['subsection_name']) ?: '');
+        $newsModel->source_url = $news['web_url'];
+        $newsModel->published_at = Carbon::parse($news['pub_date']);
+
+        return $newsModel;
     }
 }

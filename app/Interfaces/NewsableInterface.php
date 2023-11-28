@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
+use App\Models\News;
 use Illuminate\Support\Collection;
 
 interface NewsableInterface
@@ -12,7 +13,16 @@ interface NewsableInterface
      * 
      * @param Collection $news raw news data
      * 
-     * @return Collection<App\Models\News> collection of structured news data
+     * @return News final News Model
      */
-    public function makeNewsModel(Collection $news): Collection;
+    public function makeNewsModel(array $news): News;
+
+    /**
+     * check whether the raw data can be inserted as News Model
+     * 
+     * @param array $news
+     * 
+     * @param bool 
+     */
+    public function checkValidData(array $news): bool;
 }
