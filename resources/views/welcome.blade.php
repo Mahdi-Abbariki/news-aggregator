@@ -30,6 +30,7 @@
 <body>
     <div class="parentDiv">
         <p>Hi, Welcome to News Aggregator project. Get start by reading Readme.md file</p>
+        <p style="text-align: center"><a href="/api/documentation">API Documentation</a></p>
         <p style="text-align: center">Developed by <b>Mahdi Abbariki</b></p>
     </div>
 </body>

@@ -70,6 +70,11 @@ php artisan news:update
 Access news data using the provided endpoints or integrate the NewsRepository into your controllers or services.
 
 
+#### API documentation
+
+You can also Access API documentation through this url `/api/documentation`
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
